@@ -1108,9 +1108,9 @@ man_remote (struct management *man, const char **p)
 static void
 man_knock (struct management *man, const char **p)
 {
-  if (man->persist.callback.knock_cmd)
+  if (man->persist.callback.knock)
     {
-      const bool status = (*man->persist.callback.knock_cmd)(man->persist.callback.arg, p);
+      const bool status = (*man->persist.callback.knock) (man->persist.callback.arg, p);
       if (status)
 	{
 	  msg (M_CLIENT, "SUCCESS: knock command succeeded");

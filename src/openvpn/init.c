@@ -253,41 +253,6 @@ management_callback_remote_cmd (void *arg, const char **p)
 }
 
 static bool
-management_callback_knock_cmd (void *arg, const char **p)
-{
-    struct context *c = (struct context *) arg;
-    struct buffer buf;
-    struct link_socket_actual to_addr;
-    struct addrinfo *ai;
-    int status;
-    int port;
-    int size;
-
-    memset (&buf, 0, sizeof(buf));
-    memset (&to_addr, 0, sizeof(to_addr));
-
-    status = openvpn_getaddrinfo (GETADDR_HOST_ORDER, p[1], 0, NULL, AF_INET, &ai);
-    if (status != 0)
-      return false;
-
-    to_addr.dest.addr.in4 = *(struct sockaddr_in *) ai->ai_addr;
-    freeaddrinfo (ai);
-
-    port = atoi (p[2]);
-    if (!legal_ipv4_port (port))
-      return false;
-
-    buf.capacity = buf.len = strlen (p[3]);
-    buf.offset = 0;
-    buf.data = (uint8_t *) p[3];
-
-    size = link_socket_write (c->c2.link_socket,
-                              &buf,
-                              &to_addr);
-    return (size > 0);
-}
-
-static bool
 ce_management_query_remote (struct context *c, const char *remote_ip_hint)
 {
   struct gc_arena gc = gc_new ();
@@ -3231,7 +3196,6 @@ init_management_callback_p2p (struct context *c)
       cb.show_net = management_show_net_callback;
       cb.proxy_cmd = management_callback_proxy_cmd;
       cb.remote_cmd = management_callback_remote_cmd;
-      cb.knock_cmd = management_callback_knock_cmd;
       management_set_callback (management, &cb);
     }
 #endif
