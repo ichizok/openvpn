@@ -1106,6 +1106,27 @@ man_remote (struct management *man, const char **p)
 }
 
 static void
+man_knock (struct management *man, const char **p)
+{
+  if (man->persist.callback.knock_cmd)
+    {
+      const bool status = (*man->persist.callback.knock_cmd)(man->persist.callback.arg, p);
+      if (status)
+	{
+	  msg (M_CLIENT, "SUCCESS: knock command succeeded");
+	}
+      else
+	{
+	  msg (M_CLIENT, "ERROR: knock command failed");
+	}
+    }
+  else
+    {
+      msg (M_CLIENT, "ERROR: The knock command is not supported by the current daemon mode");
+    }
+}
+
+static void
 man_dispatch_command (struct management *man, struct status_output *so, const char **p, const int nparms)
 {
   struct gc_arena gc = gc_new ();
@@ -1332,6 +1353,11 @@ man_dispatch_command (struct management *man, struct status_output *so, const ch
     {
       if (man_need (man, p, 1, MN_AT_LEAST))
 	man_remote (man, p);
+    }
+  else if (streq (p[0], "knock"))
+    {
+      if (man_need (man, p, 3, 0))
+	man_knock (man, p);
     }
 #if 1
   else if (streq (p[0], "test"))
