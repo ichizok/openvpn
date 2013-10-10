@@ -2850,7 +2850,7 @@ management_callback_knock (void *arg, const char **p)
   if (!legal_ipv4_port (port))
       return false;
 
-  to_addr.dest.addr.in4.sin_port = port;
+  to_addr.dest.addr.in4.sin_port = htons (port);
 
   buf.capacity = buf.len = strlen (p[3]);
   buf.offset = 0;
