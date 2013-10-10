@@ -2828,36 +2828,38 @@ management_client_pf (void *arg,
 static bool
 management_callback_knock (void *arg, const char **p)
 {
-    struct context *c = ((struct multi_context *) arg)->top;
-    struct buffer buf;
-    struct link_socket_actual to_addr;
-    struct addrinfo *ai;
-    int status;
-    int port;
-    int size;
+  struct context *c = &((struct multi_context *) arg)->top;
+  struct buffer buf;
+  struct link_socket_actual to_addr;
+  struct addrinfo *ai;
+  int status;
+  int port;
+  int size;
 
-    memset (&buf, 0, sizeof(buf));
-    memset (&to_addr, 0, sizeof(to_addr));
+  CLEAR(buf);
+  CLEAR(to_addr);
 
-    status = openvpn_getaddrinfo (GETADDR_HOST_ORDER, p[1], 0, NULL, AF_INET, &ai);
-    if (status != 0)
+  status = openvpn_getaddrinfo (GETADDR_HOST_ORDER, p[1], 0, NULL, AF_INET, &ai);
+  if (status != 0)
       return false;
 
-    to_addr.dest.addr.in4 = *(struct sockaddr_in *) ai->ai_addr;
-    freeaddrinfo (ai);
+  to_addr.dest.addr.in4 = *(struct sockaddr_in *) ai->ai_addr;
+  freeaddrinfo (ai);
 
-    port = atoi (p[2]);
-    if (!legal_ipv4_port (port))
+  port = atoi (p[2]);
+  if (!legal_ipv4_port (port))
       return false;
 
-    buf.capacity = buf.len = strlen (p[3]);
-    buf.offset = 0;
-    buf.data = (uint8_t *) p[3];
+  to_addr.dest.addr.in4.sin_port = port;
 
-    size = link_socket_write (c->c2.link_socket,
-                              &buf,
-                              &to_addr);
-    return (size > 0);
+  buf.capacity = buf.len = strlen (p[3]);
+  buf.offset = 0;
+  buf.data = (uint8_t *) p[3];
+
+  size = link_socket_write (c->c2.link_socket,
+                            &buf,
+                            &to_addr);
+  return (size > 0);
 }
 
 void
