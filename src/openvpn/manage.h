@@ -173,7 +173,7 @@ struct management_callback
 #endif
   bool (*proxy_cmd) (void *arg, const char **p);
   bool (*remote_cmd) (void *arg, const char **p);
-  bool (*knock) (void *arg, const char **p);
+  bool (*knock_cmd) (void *arg, const char **p);
 };
 
 /*
