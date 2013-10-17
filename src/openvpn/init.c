@@ -3208,9 +3208,16 @@ management_callback_knock_cmd (void *arg, const char **p)
 
   to_addr.dest.addr.in4.sin_port = htons (port);
 
-  buf.capacity = buf.len = strlen (p[3]);
-  buf.offset = 0;
-  buf.data = (uint8_t *) p[3];
+  if (p[3])
+    {
+      buf.len = strlen (p[3]);
+      buf.data = (uint8_t *) p[3];
+    }
+  else
+    {
+      buf.len = 0;
+      buf.data = (uint8_t *) &buf;
+    }
 
   size = link_socket_write (c->c2.link_socket,
                             &buf,

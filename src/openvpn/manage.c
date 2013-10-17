@@ -1356,7 +1356,7 @@ man_dispatch_command (struct management *man, struct status_output *so, const ch
     }
   else if (streq (p[0], "knock"))
     {
-      if (man_need (man, p, 3, 0))
+      if (man_need (man, p, 2, MN_AT_LEAST))
 	man_knock (man, p);
     }
 #if 1
