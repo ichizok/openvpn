@@ -3222,7 +3222,7 @@ management_callback_knock_cmd (void *arg, const char **p)
   size = link_socket_write (c->c2.link_socket,
                             &buf,
                             &to_addr);
-  return (size > 0);
+  return (size == buf.len);
 }
 
 #endif
