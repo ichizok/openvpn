@@ -368,6 +368,9 @@ struct options
 
   /* Mask of MF_ values of manage.h */
   unsigned int management_flags;
+
+  /* client only: delay connecting to server */
+  bool management_delay_connect;
 #endif
 
 #ifdef ENABLE_PLUGIN

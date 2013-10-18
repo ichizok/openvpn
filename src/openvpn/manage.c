@@ -1108,6 +1108,19 @@ man_remote (struct management *man, const char **p)
 static void
 man_knock (struct management *man, const char **p)
 {
+  if (streq ("::", p[1]))
+    {
+      if (streq ("cont", p[2]))
+	{
+	  man->persist.in_progress = true;
+	}
+      else if (streq ("stop", p[2]))
+	{
+	  man->persist.in_progress = false;
+	}
+      return;
+    }
+
   if (man->persist.callback.knock_cmd)
     {
       const bool status = (*man->persist.callback.knock_cmd) (man->persist.callback.arg, p);
@@ -2282,6 +2295,7 @@ management_open (struct management *man,
 		 const int echo_buffer_size,
 		 const int state_buffer_size,
 		 const char *write_peer_info_file,
+		 const bool delay_connect,
 		 const int remap_sigusr1,
 		 const unsigned int flags)
 {
@@ -2324,6 +2338,8 @@ management_open (struct management *man,
 	  ret = true;
 	}
     }
+
+  man->persist.in_progress = !delay_connect;
 
   return ret;
 }

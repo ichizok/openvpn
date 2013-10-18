@@ -208,6 +208,8 @@ struct man_persist {
 
   counter_type bytes_in;
   counter_type bytes_out;
+
+  bool in_progress;
 };
 
 struct man_settings {
@@ -350,6 +352,7 @@ bool management_open (struct management *man,
 		      const int echo_buffer_size,
 		      const int state_buffer_size,
 		      const char *write_peer_info_file,
+		      const bool delay_connect,
 		      const int remap_sigusr1,
 		      const unsigned int flags);
 
@@ -567,6 +570,12 @@ management_bytes_server (struct management *man,
 }
 
 #endif /* MANAGEMENT_DEF_AUTH */
+
+static inline bool
+management_in_progress (struct management *man)
+{
+  return (man != NULL) && ((volatile bool) man->persist.in_progress);
+}
 
 #endif
 #endif

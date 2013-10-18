@@ -3286,6 +3286,7 @@ open_management (struct context *c)
 			       c->options.management_echo_buffer_size,
 			       c->options.management_state_buffer_size,
 			       c->options.management_write_peer_info_file,
+			       c->options.management_delay_connect,
 			       c->options.remap_sigusr1,
 			       flags))
 	    {

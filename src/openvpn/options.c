@@ -4256,6 +4256,11 @@ add_option (struct options *options,
 	}
       options->management_log_history_cache = cache;
     }
+  else if (streq (p[0], "management-delay-connect"))
+    {
+      VERIFY_PERMISSION (OPT_P_GENERAL);
+      options->management_delay_connect = true;
+    }
 #endif
 #ifdef ENABLE_PLUGIN
   else if (streq (p[0], "plugin") && p[1])

@@ -1528,6 +1528,8 @@ process_io (struct context *c)
       ASSERT (management);
       management_io (management);
     }
+  if (!management_in_progress (management))
+      return;
 #endif
 
   /* TCP/UDP port ready to accept write */
