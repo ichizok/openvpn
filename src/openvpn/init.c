@@ -3187,26 +3187,36 @@ management_callback_knock_cmd (void *arg, const char **p)
   struct context *c = (struct context *) arg;
   struct buffer buf;
   struct link_socket_actual to_addr;
-  struct addrinfo *ai;
-  int status;
+  struct addrinfo *ai, hints;
+  int err;
   int port;
   int size;
 
   CLEAR(buf);
   CLEAR(to_addr);
-
-  status = openvpn_getaddrinfo (GETADDR_HOST_ORDER, p[1], 0, NULL, AF_INET, &ai);
-  if (status != 0)
-      return false;
-
-  to_addr.dest.addr.in4 = *(struct sockaddr_in *) ai->ai_addr;
-  freeaddrinfo (ai);
+  CLEAR(hints);
+  hints.ai_flags = AI_NUMERICHOST;
 
   port = atoi (p[2]);
   if (!legal_ipv4_port (port))
-      return false;
+    return false;
 
-  to_addr.dest.addr.in4.sin_port = htons (port);
+  err = getaddrinfo (p[1], NULL, &hints, &ai);
+  if (err != 0)
+    return false;
+
+  if (ai->ai_family == AF_INET6)
+    {
+      to_addr.dest.addr.in6 = *(struct sockaddr_in6 *) ai->ai_addr;
+      to_addr.dest.addr.in6.sin6_port = htons (port);
+    }
+  else /* if (ai->ai_family == AF_INET) */
+    {
+      to_addr.dest.addr.in4 = *(struct sockaddr_in *) ai->ai_addr;
+      to_addr.dest.addr.in4.sin_port = htons (port);
+    }
+
+  freeaddrinfo (ai);
 
   if (p[3])
     {
